@@ -6,14 +6,14 @@ interface IUserService {
 class UserService implements IUserService {
     users: number = 1000;
 
-    @Catch()
+    @Catch({ rethrow: false  })
     getUsersInDatabase(): number {
-        throw new Error('Ошибка');
+        throw new Error('Some error');
     }
 }
 
 
-function Catch(rethrow: boolean = false) {
+function Catch( { rethrow }: {rethrow: boolean} = { rethrow: true} ) {
     return (
         target: Object,
         _: string | symbol,
@@ -22,7 +22,7 @@ function Catch(rethrow: boolean = false) {
         const oldMethod = descriptor.value;
         descriptor.value = (...args: any[]) => {
             try {
-                oldMethod?.apply(target, args);
+                return oldMethod?.apply(target, args);
             } catch (err) {
                 if (err instanceof Error) {
                     console.log(err.message);
@@ -34,3 +34,5 @@ function Catch(rethrow: boolean = false) {
         }
     }
 }
+
+console.log(new UserService().getUsersInDatabase());

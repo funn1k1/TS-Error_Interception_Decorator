@@ -10,18 +10,18 @@ class UserService {
         this.users = 1000;
     }
     getUsersInDatabase() {
-        throw new Error('Ошибка');
+        throw new Error('Some error');
     }
 }
 __decorate([
-    Catch()
+    Catch({ rethrow: true })
 ], UserService.prototype, "getUsersInDatabase", null);
-function Catch(rethrow = false) {
+function Catch({ rethrow } = { rethrow: true }) {
     return (target, _, descriptor) => {
         const oldMethod = descriptor.value;
         descriptor.value = (...args) => {
             try {
-                oldMethod === null || oldMethod === void 0 ? void 0 : oldMethod.apply(target, args);
+                return oldMethod === null || oldMethod === void 0 ? void 0 : oldMethod.apply(target, args);
             }
             catch (err) {
                 if (err instanceof Error) {
@@ -34,3 +34,4 @@ function Catch(rethrow = false) {
         };
     };
 }
+console.log(new UserService().getUsersInDatabase());
